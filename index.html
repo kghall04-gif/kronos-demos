@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Tradie Demo</title>
+  <style>
+    :root {
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --accent-light: #dbeafe;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a1a; }
+
+    /* Demo Banner */
+    #demo-banner {
+      background: #111827;
+      color: #f9fafb;
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    #demo-banner a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    #demo-banner a:hover { text-decoration: underline; }
+
+    /* Nav */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #111827; }
+    .nav-logo { font-size: 28px; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { text-decoration: none; color: #374151; font-size: 14px; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 6px;
+      font-size: 14px; font-weight: 600; text-decoration: none; transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--accent-dark); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+
+    /* Hero */
+    #hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      padding: 72px 24px;
+    }
+    .hero-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: center;
+    }
+    @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 600;
+      margin-bottom: 20px; color: #e2e8f0;
+    }
+    .hero-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+    h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+    h1 span { color: var(--accent); }
+    .hero-tagline { font-size: 17px; color: #cbd5e1; margin-bottom: 32px; line-height: 1.6; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff; padding: 13px 26px; border-radius: 8px;
+      font-size: 15px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent; color: #fff; padding: 13px 26px; border-radius: 8px;
+      font-size: 15px; font-weight: 600; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.7); }
+
+    /* Chat Widget */
+    .chat-widget {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; height: 460px;
+    }
+    .chat-header {
+      background: var(--accent); color: #fff; padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .chat-avatar {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.25); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 700; font-size: 14px; }
+    .chat-header-status { font-size: 11px; opacity: .8; display: flex; align-items: center; gap: 4px; }
+    .status-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px; background: #f8fafc;
+    }
+    .msg {
+      max-width: 82%; padding: 10px 14px; border-radius: 14px;
+      font-size: 13.5px; line-height: 1.5;
+    }
+    .msg-bot {
+      background: #fff; color: #1a1a1a; align-self: flex-start;
+      border: 1px solid #e5e7eb; border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .msg-user { background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .msg-typing { display: flex; gap: 4px; padding: 12px 14px; }
+    .msg-typing span {
+      width: 7px; height: 7px; background: #94a3b8; border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .msg-typing span:nth-child(2) { animation-delay: .2s; }
+    .msg-typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+    .chat-input-row {
+      display: flex; padding: 10px 12px; gap: 8px;
+      border-top: 1px solid #e5e7eb; background: #fff;
+    }
+    .chat-input {
+      flex: 1; border: 1px solid #e5e7eb; border-radius: 8px; padding: 9px 13px;
+      font-size: 13.5px; outline: none; transition: border-color .2s; font-family: inherit;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-send {
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 9px 16px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .2s;
+    }
+    .chat-send:hover { background: var(--accent-dark); }
+    .chat-send:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Trust Strip */
+    #trust { background: var(--accent-light); border-top: 2px solid var(--accent); padding: 20px 24px; }
+    .trust-inner {
+      max-width: 1100px; margin: 0 auto; display: flex; gap: 32px;
+      flex-wrap: wrap; align-items: center; justify-content: center;
+    }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #1e3a5f; }
+    .trust-icon { font-size: 20px; }
+
+    /* Sections */
+    section { padding: 72px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-block; background: var(--accent-light); color: var(--accent);
+      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 999px; margin-bottom: 12px;
+    }
+    h2 { font-size: clamp(24px, 3vw, 36px); font-weight: 800; margin-bottom: 12px; color: #0f172a; }
+    .section-sub { color: #64748b; font-size: 16px; margin-bottom: 40px; line-height: 1.6; }
+
+    /* Services */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+    }
+    .service-card {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .service-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .service-icon { font-size: 32px; margin-bottom: 12px; }
+    .service-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+    .service-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+    /* Why Us */
+    #why { background: #f8fafc; }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
+    .why-points { display: flex; flex-direction: column; gap: 20px; }
+    .why-point { display: flex; gap: 14px; align-items: flex-start; }
+    .why-check {
+      width: 32px; height: 32px; min-width: 32px; background: var(--accent); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+    }
+    .why-point-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 3px; color: #0f172a; }
+    .why-point-text p { font-size: 14px; color: #64748b; line-height: 1.5; }
+    .reviews { display: flex; flex-direction: column; gap: 16px; }
+    .review-card {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .review-stars { color: #f59e0b; font-size: 15px; margin-bottom: 8px; }
+    .review-text { font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 10px; font-style: italic; }
+    .review-author { font-size: 13px; font-weight: 700; color: #0f172a; }
+
+    /* Contact */
+    #contact { background: #fff; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+    .contact-info p { font-size: 15px; color: #64748b; line-height: 1.7; margin-bottom: 24px; }
+    .contact-detail {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 15px; color: #374151; margin-bottom: 12px; font-weight: 500;
+    }
+    .contact-detail-icon { font-size: 20px; }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+    .form-input, .form-textarea {
+      width: 100%; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 11px 14px;
+      font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s; color: #0f172a;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 110px; }
+    .form-submit {
+      background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 13px;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; font-family: inherit;
+    }
+    .form-submit:hover { background: var(--accent-dark); }
+    #form-success {
+      display: none; background: #dcfce7; color: #166534; border-radius: 8px;
+      padding: 14px; font-size: 14px; font-weight: 600; text-align: center;
+    }
+
+    /* Footer */
+    footer { background: #0f172a; color: #94a3b8; padding: 32px 24px; text-align: center; }
+    footer .footer-brand { color: #f1f5f9; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer .footer-sub { font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- Demo Banner -->
+<div id="demo-banner">
+  This is a free demo website built by <a href="https://kronosai.co.nz" target="_blank">Kronos AI</a> &mdash; want one for your business?
+  <a href="https://kronosai.co.nz" target="_blank">&nbsp;Get yours free &rarr;</a>
+</div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-brand">
+    <span class="nav-logo" id="nav-logo">&#x1F527;</span>
+    <span id="nav-name">Your Business</span>
+  </div>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#why">Why Us</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Get a Quote</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span id="hero-badge-text">Available Now</span>
+      </div>
+      <h1 id="hero-headline">Fast, Reliable <span>Service</span><br>You Can Trust</h1>
+      <p class="hero-tagline" id="hero-tagline">Licensed professionals. Same-day service available.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Get a Free Quote</a>
+        <a href="tel:" class="btn-secondary" id="hero-call">&#x1F4DE; Call Now</a>
+      </div>
+    </div>
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+      <div class="chat-header">
+        <div class="chat-avatar" id="chat-avatar">&#x1F916;</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chat-bot-name">AI Assistant</div>
+          <div class="chat-header-status">
+            <span class="status-dot"></span> Online &mdash; replies instantly
+          </div>
+        </div>
+      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Ask me anything&hellip;" />
+        <button class="chat-send" id="chat-send">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Strip -->
+<div id="trust">
+  <div class="trust-inner" id="trust-items"></div>
+</div>
+
+<!-- Services -->
+<section id="services">
+  <div class="section-inner">
+    <span class="section-label">What We Do</span>
+    <h2>Our Services</h2>
+    <p class="section-sub">We handle everything from routine maintenance to emergency call-outs.</p>
+    <div class="services-grid" id="services-grid"></div>
+  </div>
+</section>
+
+<!-- Why Us -->
+<section id="why">
+  <div class="section-inner">
+    <div class="why-grid">
+      <div>
+        <span class="section-label">Why Choose Us</span>
+        <h2>Trusted by Hundreds of Local Customers</h2>
+        <p class="section-sub">We show up on time, do the job right, and stand behind our work.</p>
+        <div class="why-points" id="why-points"></div>
+      </div>
+      <div>
+        <span class="section-label">Customer Reviews</span>
+        <div class="reviews" id="reviews"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <span class="section-label">Get In Touch</span>
+        <h2>Book a Job or Get a Quote</h2>
+        <p>Fill in the form and we will get back to you within the hour during business hours. For urgent jobs, call us directly.</p>
+        <div class="contact-detail">
+          <span class="contact-detail-icon">&#x1F4DE;</span>
+          <span id="contact-phone">Contact us online</span>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-detail-icon">&#x1F4CD;</span>
+          <span>Serving your local area</span>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-detail-icon">&#x1F550;</span>
+          <span>Mon&ndash;Sat: 7am&ndash;6pm</span>
+        </div>
+      </div>
+      <div>
+        <form class="contact-form" id="contact-form">
+          <div class="form-row">
+            <input type="text" class="form-input" placeholder="Your Name" required />
+            <input type="tel" class="form-input" placeholder="Phone Number" required />
+          </div>
+          <input type="email" class="form-input" placeholder="Email Address" required />
+          <textarea class="form-textarea" placeholder="Tell us what you need&hellip;" required></textarea>
+          <button type="submit" class="form-submit">Send Message</button>
+        </form>
+        <div id="form-success">&#x2705; Thanks! We will be in touch shortly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand" id="footer-name">Your Business</div>
+  <div>Serving local customers with quality workmanship.</div>
+  <div class="footer-sub">
+    Website by <a href="https://kronosai.co.nz" target="_blank">Kronos AI</a>
+    &mdash; <a href="https://kronosai.co.nz" target="_blank">kronosai.co.nz</a>
+  </div>
+</footer>
+
+<script>
+  // Read URL params
+  var params  = new URLSearchParams(window.location.search);
+  var bizName = decodeURIComponent(params.get('b') || 'Your Business');
+  var type    = (params.get('t') || 'plumber').toLowerCase();
+  var phone   = params.get('p') || '';
+
+  // Industry configs
+  var configs = {
+    plumber: {
+      accent: '#2563eb', accentDark: '#1d4ed8', accentLight: '#dbeafe',
+      logo: '🔧',
+      headline: 'Fast, Reliable <span>Plumbing</span><br>You Can Trust',
+      tagline: 'Licensed plumbers. Same-day service available. No callout fee on booked jobs.',
+      badgeText: '✔ Licensed & Insured Plumbers',
+      trustBadge: '✅ Licensed Master Plumber',
+      services: [
+        { icon: '🚿', name: 'Hot Water Systems', desc: 'Installation, repair and replacement of hot water cylinders and heat pumps.' },
+        { icon: '🪠', name: 'Blocked Drains',    desc: 'Fast drain unblocking using CCTV inspection and high-pressure water jetting.' },
+        { icon: '🚽', name: 'Toilet & Bathroom', desc: 'Toilet repairs, bathroom renovations and all fixture installations.' },
+        { icon: '💧', name: 'Leak Detection',    desc: 'Precision leak detection and repair to protect your home from water damage.' },
+        { icon: '🏗️', name: 'New Installations', desc: 'Full plumbing for new builds and major renovations, on time and on budget.' },
+        { icon: '🔩', name: 'Emergency Callouts', desc: '24/7 emergency plumbing — we will be there when you need us most.' },
+      ],
+      reviews: [
+        { stars: 5, text: 'Arrived within the hour and fixed our burst pipe quickly. Extremely professional and fairly priced.', author: 'Sarah M., Auckland' },
+        { stars: 5, text: 'Finally a plumber who shows up on time! Fantastic job on our new bathroom. Highly recommend.', author: 'James T., North Shore' },
+        { stars: 5, text: 'Sorted our blocked drain same day. Friendly team and the price was very reasonable.', author: 'Lisa K., West Auckland' },
+      ],
+    },
+    electrician: {
+      accent: '#ea580c', accentDark: '#c2410c', accentLight: '#ffedd5',
+      logo: '⚡',
+      headline: 'Expert <span>Electrical</span><br>Work Done Right',
+      tagline: 'Certified electricians for residential & commercial. Safe, reliable, on-time every time.',
+      badgeText: '✔ Registered Electricians',
+      trustBadge: '✅ Registered Electrician (NZ)',
+      services: [
+        { icon: '🏠', name: 'Residential Wiring',   desc: 'Full home rewiring, new circuits, and power upgrades to meet modern demands.' },
+        { icon: '💡', name: 'LED Lighting',          desc: 'Energy-efficient LED upgrades and smart lighting systems installed professionally.' },
+        { icon: '🔌', name: 'Switchboard Upgrades',  desc: 'Modern switchboard installation with safety switches and surge protection.' },
+        { icon: '🏢', name: 'Commercial Electrical', desc: 'Office fit-outs, three-phase power and commercial maintenance contracts.' },
+        { icon: '🔋', name: 'EV Chargers',           desc: 'Home and business EV charging station supply and installation.' },
+        { icon: '🚨', name: 'Fault Finding',         desc: 'Fast diagnosis and repair of electrical faults, trips and outages.' },
+      ],
+      reviews: [
+        { stars: 5, text: 'Had our whole house rewired. Tidy work, no mess left behind and finished on schedule. Brilliant.', author: 'Mark R., Wellington' },
+        { stars: 5, text: 'Installed our new switchboard and EV charger in one visit. Very knowledgeable and professional.', author: 'Priya S., Hutt Valley' },
+        { stars: 5, text: 'Fixed a tricky fault that two other electricians could not find. Highly skilled team.', author: 'David W., Porirua' },
+      ],
+    },
+    auto: {
+      accent: '#16a34a', accentDark: '#15803d', accentLight: '#dcfce7',
+      logo: '🚗',
+      headline: 'Quality <span>Auto Repairs</span><br>You Can Count On',
+      tagline: 'Certified mechanics for all makes and models. Honest pricing. No hidden fees.',
+      badgeText: '✔ Certified Auto Technicians',
+      trustBadge: '✅ MTA Certified Mechanics',
+      services: [
+        { icon: '🔍', name: 'WOF Inspections',      desc: 'Fast, thorough Warrant of Fitness checks with same-day results.' },
+        { icon: '🛢️', name: 'Oil & Service',         desc: 'Full vehicle servicing including oil, filters, fluids and safety checks.' },
+        { icon: '🛞', name: 'Tyres & Brakes',        desc: 'Tyre supply and fitting, brake pad and rotor replacement, wheel alignment.' },
+        { icon: '🔧', name: 'Engine Diagnostics',    desc: 'Computer diagnostics to identify faults and engine warning lights.' },
+        { icon: '❄️', name: 'Air Conditioning',      desc: 'A/C regas, repair and full system servicing to keep you comfortable.' },
+        { icon: '⚙️', name: 'Transmission Service', desc: 'Automatic and manual gearbox servicing and repairs by specialists.' },
+      ],
+      reviews: [
+        { stars: 5, text: 'Honest, fast and great value. They found an issue two other garages missed. My go-to workshop.', author: 'Tom H., Christchurch' },
+        { stars: 5, text: 'Got my WOF and full service done in under 2 hours. No upselling, just straight-up good work.', author: 'Rachel B., Riccarton' },
+        { stars: 5, text: 'Fixed my A/C perfectly before summer. Clear explanation of the work and very fair price.', author: 'Mike O., Papanui' },
+      ],
+    },
+  };
+
+  var cfg = configs[type] || configs.plumber;
+
+  // Build system prompt and greeting with business name
+  cfg.systemPrompt = 'You are a helpful customer service assistant for ' + bizName + '. ';
+  if (type === 'plumber') {
+    cfg.systemPrompt += 'It is a professional plumbing company. Help customers book jobs, get quotes, and answer plumbing questions. Be friendly, professional, and concise. Always encourage them to call or fill in the contact form for urgent issues. Keep responses under 80 words.';
+    cfg.chatGreeting = 'Hi there! 👋 I\'m the AI assistant for ' + bizName + '. I can help you book a job, get a quote, or answer any plumbing questions. What can I help you with today?';
+  } else if (type === 'electrician') {
+    cfg.systemPrompt += 'It is a professional electrical company. Help customers with booking electrical work, safety questions, and quotes. Emphasise safety and that all work is done by registered electricians. Be friendly and professional. Keep responses under 80 words.';
+    cfg.chatGreeting = 'Hi there! ⚡ I\'m the AI assistant for ' + bizName + '. Ask me about electrical work, pricing, or book a job — I\'m here to help!';
+  } else {
+    cfg.systemPrompt += 'It is a professional auto repair and servicing business. Help customers book services, understand repairs, and get quotes. Be friendly, honest and knowledgeable about vehicles. Keep responses under 80 words.';
+    cfg.chatGreeting = 'Hey! 🚗 I\'m the AI assistant for ' + bizName + '. I can help you book a service, WOF, or answer questions about your vehicle. What\'s up?';
+  }
+
+  // Apply CSS variables
+  document.documentElement.style.setProperty('--accent',       cfg.accent);
+  document.documentElement.style.setProperty('--accent-dark',  cfg.accentDark);
+  document.documentElement.style.setProperty('--accent-light', cfg.accentLight);
+
+  // Page metadata
+  document.getElementById('page-title').textContent  = bizName;
+  document.getElementById('nav-logo').textContent    = cfg.logo;
+  document.getElementById('nav-name').textContent    = bizName;
+  document.getElementById('footer-name').textContent = bizName;
+
+  // Hero
+  document.getElementById('hero-badge-text').textContent = cfg.badgeText;
+  document.getElementById('hero-headline').innerHTML     = cfg.headline;
+  document.getElementById('hero-tagline').textContent    = cfg.tagline;
+  if (phone) {
+    document.getElementById('hero-call').href             = 'tel:' + phone;
+    document.getElementById('hero-call').textContent      = '📞 ' + phone;
+    document.getElementById('contact-phone').textContent  = phone;
+  } else {
+    document.getElementById('hero-call').style.display = 'none';
+  }
+
+  // Trust strip
+  var trustData = [
+    { icon: cfg.trustBadge.split(' ')[0], label: cfg.trustBadge.split(' ').slice(1).join(' ') },
+    { icon: '⭐', label: '5-Star Rated' },
+    { icon: '📍', label: 'Local & Family Owned' },
+    { icon: '💯', label: 'Satisfaction Guaranteed' },
+  ];
+  document.getElementById('trust-items').innerHTML = trustData.map(function(t) {
+    return '<div class="trust-item"><span class="trust-icon">' + t.icon + '</span><span>' + t.label + '</span></div>';
+  }).join('');
+
+  // Services
+  document.getElementById('services-grid').innerHTML = cfg.services.map(function(s) {
+    return '<div class="service-card"><div class="service-icon">' + s.icon + '</div><h3>' + s.name + '</h3><p>' + s.desc + '</p></div>';
+  }).join('');
+
+  // Why Us
+  var whyPoints = [
+    { title: 'Fully Licensed & Insured',  desc: 'All team members are certified professionals with full insurance coverage.' },
+    { title: 'Transparent Pricing',        desc: 'You will always know the cost before we start. No surprises on the final invoice.' },
+    { title: 'Same-Day Availability',      desc: 'We keep slots open for urgent work so you are never left waiting.' },
+    { title: '100% Satisfaction',          desc: 'We stand behind every job we do. Not done until you are happy.' },
+  ];
+  document.getElementById('why-points').innerHTML = whyPoints.map(function(p) {
+    return '<div class="why-point"><div class="why-check">✓</div><div class="why-point-text"><h4>' + p.title + '</h4><p>' + p.desc + '</p></div></div>';
+  }).join('');
+
+  // Reviews
+  document.getElementById('reviews').innerHTML = cfg.reviews.map(function(r) {
+    return '<div class="review-card"><div class="review-stars">' + '★'.repeat(r.stars) + '</div><p class="review-text">&ldquo;' + r.text + '&rdquo;</p><div class="review-author">&mdash; ' + r.author + '</div></div>';
+  }).join('');
+
+  // Chat widget
+  document.getElementById('chat-avatar').textContent   = cfg.logo;
+  document.getElementById('chat-bot-name').textContent = bizName + ' AI';
+
+  var chatEl    = document.getElementById('chat-messages');
+  var inputEl   = document.getElementById('chat-input');
+  var sendBtn   = document.getElementById('chat-send');
+  var history   = [];
+
+  function addMsg(text, role) {
+    var d = document.createElement('div');
+    d.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-bot');
+    d.textContent = text;
+    chatEl.appendChild(d);
+    chatEl.scrollTop = chatEl.scrollHeight;
+    return d;
+  }
+
+  function addTyping() {
+    var d = document.createElement('div');
+    d.className = 'msg msg-bot msg-typing';
+    d.innerHTML = '<span></span><span></span><span></span>';
+    chatEl.appendChild(d);
+    chatEl.scrollTop = chatEl.scrollHeight;
+    return d;
+  }
+
+  addMsg(cfg.chatGreeting, 'assistant');
+
+  function send() {
+    var txt = inputEl.value.trim();
+    if (!txt) return;
+    inputEl.value = '';
+    sendBtn.disabled = true;
+    addMsg(txt, 'user');
+    history.push({ role: 'user', content: txt });
+    var typing = addTyping();
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: cfg.systemPrompt, messages: history })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      typing.remove();
+      var reply = (data.content && data.content[0] && data.content[0].text) || 'Sorry, I could not respond. Please try again.';
+      addMsg(reply, 'assistant');
+      history.push({ role: 'assistant', content: reply });
+    })
+    .catch(function() {
+      typing.remove();
+      addMsg('Something went wrong. Please call us directly!', 'assistant');
+    })
+    .finally(function() {
+      sendBtn.disabled = false;
+      inputEl.focus();
+    });
+  }
+
+  sendBtn.addEventListener('click', send);
+  inputEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') send(); });
+
+  // Contact form
+  document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  });
+</script>
+</body>
+</html>
