@@ -8,7 +8,10 @@
     :root {
       --accent: #2563eb;
       --accent-dark: #1d4ed8;
+      --accent2: #1d4ed8;
       --accent-light: #dbeafe;
+      --accent-glow: rgba(37,99,235,0.2);
+      --accent-dim: rgba(37,99,235,0.08);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a1a; }
@@ -47,7 +50,7 @@
       background: var(--accent); color: #fff; padding: 8px 18px; border-radius: 6px;
       font-size: 14px; font-weight: 600; text-decoration: none; transition: background .2s;
     }
-    .nav-cta:hover { background: var(--accent-dark); }
+    .nav-cta:hover { background: var(--accent2); }
     @media (max-width: 768px) { .nav-links { display: none; } }
 
     /* Hero */
@@ -63,7 +66,7 @@
     @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      background: var(--accent-glow); border: 1px solid var(--accent);
       border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 600;
       margin-bottom: 20px; color: #e2e8f0;
     }
@@ -77,7 +80,7 @@
       font-size: 15px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
       transition: background .2s, transform .1s;
     }
-    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
     .btn-secondary {
       background: transparent; color: #fff; padding: 13px 26px; border-radius: 8px;
       font-size: 15px; font-weight: 600; text-decoration: none;
@@ -137,7 +140,7 @@
       background: var(--accent); color: #fff; border: none; border-radius: 8px;
       padding: 9px 16px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .2s;
     }
-    .chat-send:hover { background: var(--accent-dark); }
+    .chat-send:hover { background: var(--accent2); }
     .chat-send:disabled { opacity: .5; cursor: not-allowed; }
 
     /* Trust Strip */
@@ -168,7 +171,7 @@
       background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px;
       transition: box-shadow .2s, transform .2s;
     }
-    .service-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .service-card:hover { box-shadow: 0 8px 24px var(--accent-glow); border-color: var(--accent); transform: translateY(-2px); }
     .service-icon { font-size: 32px; margin-bottom: 12px; }
     .service-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
     .service-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
@@ -218,7 +221,7 @@
       background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 13px;
       font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; font-family: inherit;
     }
-    .form-submit:hover { background: var(--accent-dark); }
+    .form-submit:hover { background: var(--accent2); }
     #form-success {
       display: none; background: #dcfce7; color: #166534; border-radius: 8px;
       padding: 14px; font-size: 14px; font-weight: 600; text-align: center;
@@ -370,11 +373,38 @@
 </footer>
 
 <script>
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(0,2),16);
+    const g = parseInt(hex.slice(2,4),16);
+    const b = parseInt(hex.slice(4,6),16);
+    return {r,g,b};
+  }
+
+  function darkenHex(hex, percent) {
+    const {r,g,b} = hexToRgb(hex);
+    const factor = 1 - percent/100;
+    const dr = Math.round(r*factor).toString(16).padStart(2,'0');
+    const dg = Math.round(g*factor).toString(16).padStart(2,'0');
+    const db = Math.round(b*factor).toString(16).padStart(2,'0');
+    return dr+dg+db;
+  }
+
+  function applyCustomColour(hex) {
+    if (!hex || hex.length < 6) return;
+    const root = document.documentElement;
+    root.style.setProperty('--accent', '#'+hex);
+    root.style.setProperty('--accent2', '#'+darkenHex(hex, 15));
+    const {r,g,b} = hexToRgb(hex);
+    root.style.setProperty('--accent-glow', `rgba(${r},${g},${b},0.2)`);
+    root.style.setProperty('--accent-dim', `rgba(${r},${g},${b},0.08)`);
+  }
+
   // Read URL params
   var params  = new URLSearchParams(window.location.search);
   var bizName = decodeURIComponent(params.get('b') || 'Your Business');
   var type    = (params.get('t') || 'plumber').toLowerCase();
   var phone   = params.get('p') || '';
+  var customColour = params.get('c') || '';
 
   // Industry configs
   var configs = {
@@ -461,7 +491,11 @@
   // Apply CSS variables
   document.documentElement.style.setProperty('--accent',       cfg.accent);
   document.documentElement.style.setProperty('--accent-dark',  cfg.accentDark);
+  document.documentElement.style.setProperty('--accent2',      cfg.accentDark);
   document.documentElement.style.setProperty('--accent-light', cfg.accentLight);
+
+  // Override with custom colour if provided
+  applyCustomColour(customColour);
 
   // Page metadata
   document.getElementById('page-title').textContent  = bizName;
