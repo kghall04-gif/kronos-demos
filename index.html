@@ -448,13 +448,13 @@
   // Build system prompt and greeting with business name
   cfg.systemPrompt = 'You are a helpful customer service assistant for ' + bizName + '. ';
   if (type === 'plumber') {
-    cfg.systemPrompt += 'It is a professional plumbing company. Help customers book jobs, get quotes, and answer plumbing questions. Be friendly, professional, and concise. Always encourage them to call or fill in the contact form for urgent issues. Keep responses under 80 words.';
+    cfg.systemPrompt += 'It is a professional plumbing company. Help customers book jobs, get quotes, and answer plumbing questions. Be friendly, professional, and concise. Always encourage them to call or fill in the contact form for urgent issues. Do not use markdown formatting like asterisks or bullet points. Write in plain conversational sentences only. Keep responses under 2 sentences.';
     cfg.chatGreeting = 'Hi there! 👋 I\'m the AI assistant for ' + bizName + '. I can help you book a job, get a quote, or answer any plumbing questions. What can I help you with today?';
   } else if (type === 'electrician') {
-    cfg.systemPrompt += 'It is a professional electrical company. Help customers with booking electrical work, safety questions, and quotes. Emphasise safety and that all work is done by registered electricians. Be friendly and professional. Keep responses under 80 words.';
+    cfg.systemPrompt += 'It is a professional electrical company. Help customers with booking electrical work, safety questions, and quotes. Emphasise safety and that all work is done by registered electricians. Be friendly and professional. Do not use markdown formatting like asterisks or bullet points. Write in plain conversational sentences only. Keep responses under 2 sentences.';
     cfg.chatGreeting = 'Hi there! ⚡ I\'m the AI assistant for ' + bizName + '. Ask me about electrical work, pricing, or book a job — I\'m here to help!';
   } else {
-    cfg.systemPrompt += 'It is a professional auto repair and servicing business. Help customers book services, understand repairs, and get quotes. Be friendly, honest and knowledgeable about vehicles. Keep responses under 80 words.';
+    cfg.systemPrompt += 'It is a professional auto repair and servicing business. Help customers book services, understand repairs, and get quotes. Be friendly, honest and knowledgeable about vehicles. Do not use markdown formatting like asterisks or bullet points. Write in plain conversational sentences only. Keep responses under 2 sentences.';
     cfg.chatGreeting = 'Hey! 🚗 I\'m the AI assistant for ' + bizName + '. I can help you book a service, WOF, or answer questions about your vehicle. What\'s up?';
   }
 
@@ -522,14 +522,23 @@
 
   var chatEl = document.getElementById('chat-messages');
 
+  function formatMessage(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
+  }
+
   function addMessage(text, role, id) {
     var d = document.createElement('div');
     d.className = 'msg ' + (role === 'user' ? 'msg-user' : 'msg-bot');
     if (text === '...') {
       d.innerHTML = '<span></span><span></span><span></span>';
       d.className += ' msg-typing';
-    } else {
+    } else if (role === 'user') {
       d.textContent = text;
+    } else {
+      d.innerHTML = formatMessage(text);
     }
     if (id) d.id = id;
     chatEl.appendChild(d);
