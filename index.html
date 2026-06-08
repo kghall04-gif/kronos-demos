@@ -581,7 +581,31 @@
         { stars: 5, text: 'The flavours are outstanding and the service is always warm and attentive.', author: 'Priya M., Hamilton' },
       ],
     },
+    trades: {
+      accent: '#E65100', accentDark: '#bf4400', accentLight: '#ffecd6',
+      logo: '🔨',
+      headline: '[name] — Trusted <span>Trades</span> in Auckland',
+      tagline: 'Quality workmanship across all trades. Plumbing, electrical, painting, maintenance and more. Licensed and insured.',
+      badgeText: '⭐ Auckland Trades & Services',
+      trustBadge: '✅ Licensed & Fully Insured',
+      heroCta: 'Get a Free Quote',
+      services: [
+        { icon: '🔧', name: 'General Maintenance',    desc: 'All property maintenance handled quickly and professionally. No job too small.' },
+        { icon: '🎨', name: 'Painting & Decorating',  desc: 'Interior and exterior painting. Clean, professional finish every time.' },
+        { icon: '💧', name: 'Plumbing & Drainage',    desc: 'Leaks, blocked drains, hot water cylinders and full plumbing installs.' },
+        { icon: '⚡', name: 'Electrical Work',         desc: 'Licensed electrical work for homes and commercial properties.' },
+        { icon: '🏗️', name: 'Renovations',            desc: 'Full renovation management from design to completion.' },
+        { icon: '🌿', name: 'Landscaping & Grounds',  desc: 'Lawn care, landscaping, and grounds maintenance.' },
+      ],
+      reviews: [
+        { stars: 5, text: 'Sorted everything in one visit — professional, tidy and great value. Will use again.', author: 'Mike T., Auckland' },
+        { stars: 5, text: 'Finally found a reliable trades company. Use them for everything now.', author: 'Sarah L., Auckland' },
+        { stars: 5, text: 'Fast response, quality work and very fairly priced. Highly recommend.', author: 'James R., Auckland' },
+      ],
+    },
   };
+
+  configs.property = configs.trades;
 
   var cfg = configs[type] || configs.plumber;
 
@@ -611,6 +635,9 @@
   } else if (type === 'restaurant') {
     cfg.systemPrompt = 'You are a friendly AI assistant for ' + bizName + ' restaurant in Hamilton NZ. Help customers with reservations, menu questions, and function enquiries.' + noMarkdown;
     cfg.chatGreeting = 'Hi! 🍽️ I\'m the AI assistant for ' + bizName + '. I can help with reservations, menu questions or function bookings — what can I help you with?';
+  } else if (type === 'trades' || type === 'property') {
+    cfg.systemPrompt = 'You are a friendly AI assistant for ' + bizName + ', a trades and property services company in Auckland NZ. Help customers get quotes and book jobs across all trade services. Services include plumbing, electrical, painting, maintenance, repairs and renovations.' + noMarkdown;
+    cfg.chatGreeting = 'Hi there! 🔨 I\'m the AI assistant for ' + bizName + '. I can help you get a quote, book a job, or answer questions about our services. What do you need help with?';
   } else {
     cfg.systemPrompt = 'You are a helpful customer service assistant for ' + bizName + '. Be friendly, professional, and concise.' + noMarkdown;
     cfg.chatGreeting = 'Hi there! I\'m the AI assistant for ' + bizName + '. How can I help you today?';
