@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="page-title">Tradie Demo</title>
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
   <style>
     :root {
       --accent: #2563eb;
@@ -325,10 +324,7 @@
       </div>
       <div>
         <span class="section-label" data-aos="fade-up">Customer Reviews</span>
-        <div class="swiper reviewSwiper" style="width:100%;padding-bottom:40px" data-aos="fade-up">
-          <div class="swiper-wrapper" id="reviewsWrapper"></div>
-          <div class="swiper-pagination"></div>
-        </div>
+        <div class="reviews" id="reviews" data-aos="fade-up"></div>
       </div>
     </div>
   </div>
@@ -406,10 +402,14 @@
       if (data.urls && data.urls.regular) {
         const hero = document.querySelector('.hero');
         if (hero) {
-          hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url(${data.urls.regular})`;
-          hero.style.backgroundSize = 'cover';
-          hero.style.backgroundPosition = 'center';
-          hero.style.backgroundAttachment = 'fixed';
+          const img = new Image();
+          img.onload = () => {
+            hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url(${data.urls.regular})`;
+            hero.style.backgroundSize = 'cover';
+            hero.style.backgroundPosition = 'center';
+            hero.style.backgroundAttachment = 'fixed';
+          };
+          img.src = data.urls.regular;
         }
       }
     } catch(e) {}
@@ -743,10 +743,27 @@
     return '<div class="why-point" data-aos="fade-left" data-aos-delay="' + (i * 100) + '"><div class="why-check">✓</div><div class="why-point-text"><h4>' + p.title + '</h4><p>' + p.desc + '</p></div></div>';
   }).join('');
 
-  // Reviews — Swiper slides
-  document.getElementById('reviewsWrapper').innerHTML = cfg.reviews.map(function(r) {
-    return '<div class="swiper-slide"><div class="review-card"><div class="review-stars">' + '★'.repeat(r.stars) + '</div><p class="review-text">&ldquo;' + r.text + '&rdquo;</p><div class="review-author">&mdash; ' + r.author + '</div></div></div>';
-  }).join('');
+  // Reviews — CSS-only auto-rotating carousel
+  (function() {
+    var reviews = cfg.reviews;
+    var count = reviews.length;
+    var cycleSecs = count * 5;
+    var showPct = Math.round(100 / count);
+    var fadePct = 4;
+    var style = document.createElement('style');
+    style.textContent = '@keyframes reviewFade{0%{opacity:0}' + fadePct + '%{opacity:1}' + (showPct - fadePct) + '%{opacity:1}' + showPct + '%{opacity:0}100%{opacity:0}}';
+    document.head.appendChild(style);
+    var container = document.getElementById('reviews');
+    container.style.position = 'relative';
+    container.style.minHeight = '170px';
+    container.innerHTML = reviews.map(function(r, i) {
+      return '<div class="review-card" style="position:absolute;top:0;left:0;width:100%;opacity:0;animation:reviewFade ' + cycleSecs + 's ' + (i * 5) + 's infinite;">'
+        + '<div class="review-stars">' + '★'.repeat(r.stars) + '</div>'
+        + '<p class="review-text">&ldquo;' + r.text + '&rdquo;</p>'
+        + '<div class="review-author">&mdash; ' + r.author + '</div>'
+        + '</div>';
+    }).join('');
+  })();
 
   // Set global system prompt for chat
   window.SYSTEM_PROMPT = cfg.systemPrompt;
@@ -848,16 +865,6 @@
 </script>
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-  AOS.init({ duration: 700, once: true, offset: 80 });
-  new Swiper('.reviewSwiper', {
-    loop: true,
-    autoplay: { delay: 4000, disableOnInteraction: false },
-    pagination: { el: '.swiper-pagination', clickable: true },
-    effect: 'fade',
-    fadeEffect: { crossFade: true }
-  });
-</script>
+<script>AOS.init({ duration: 700, once: true, offset: 80 });</script>
 </body>
 </html>
