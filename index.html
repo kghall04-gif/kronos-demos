@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="page-title">Tradie Demo</title>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
   <style>
     :root {
       --accent: #2563eb;
@@ -169,9 +171,13 @@
     }
     .service-card {
       background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px;
-      transition: box-shadow .2s, transform .2s;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
-    .service-card:hover { box-shadow: 0 8px 24px var(--accent-glow); border-color: var(--accent); transform: translateY(-2px); }
+    .service-card:hover { transform: translateY(-8px); box-shadow: 0 24px 48px rgba(0,0,0,0.15); border-color: var(--accent); }
+    .btn-solid { transition: all 0.2s ease; }
+    .btn-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
+    .nav-cta { transition: all 0.2s ease; }
+    .nav-cta:hover { transform: translateY(-1px); opacity: 0.9; }
     .service-icon { font-size: 32px; margin-bottom: 12px; }
     .service-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
     .service-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
@@ -258,16 +264,16 @@
 </nav>
 
 <!-- Hero -->
-<section id="hero">
+<section id="hero" class="hero">
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-badge">
+      <div class="hero-badge" data-aos="fade-up" data-aos-delay="0">
         <span class="hero-badge-dot"></span>
         <span id="hero-badge-text">Available Now</span>
       </div>
-      <h1 id="hero-headline">Fast, Reliable <span>Service</span><br>You Can Trust</h1>
-      <p class="hero-tagline" id="hero-tagline">Licensed professionals. Same-day service available.</p>
-      <div class="hero-actions">
+      <h1 id="hero-headline" data-aos="fade-up" data-aos-delay="100">Fast, Reliable <span>Service</span><br>You Can Trust</h1>
+      <p class="hero-tagline" id="hero-tagline" data-aos="fade-up" data-aos-delay="200">Licensed professionals. Same-day service available.</p>
+      <div class="hero-actions" data-aos="fade-up" data-aos-delay="300">
         <a href="#contact" class="btn-primary">Get a Free Quote</a>
         <a href="tel:" class="btn-secondary" id="hero-call">&#x1F4DE; Call Now</a>
       </div>
@@ -294,15 +300,15 @@
 
 <!-- Trust Strip -->
 <div id="trust">
-  <div class="trust-inner" id="trust-items"></div>
+  <div class="trust-inner" id="trust-items" data-aos="fade-in" data-aos-delay="200"></div>
 </div>
 
 <!-- Services -->
 <section id="services">
   <div class="section-inner">
-    <span class="section-label">What We Do</span>
-    <h2>Our Services</h2>
-    <p class="section-sub">We handle everything from routine maintenance to emergency call-outs.</p>
+    <span class="section-label" data-aos="fade-up">What We Do</span>
+    <h2 data-aos="fade-up">Our Services</h2>
+    <p class="section-sub" data-aos="fade-up">We handle everything from routine maintenance to emergency call-outs.</p>
     <div class="services-grid" id="services-grid"></div>
   </div>
 </section>
@@ -312,14 +318,17 @@
   <div class="section-inner">
     <div class="why-grid">
       <div>
-        <span class="section-label">Why Choose Us</span>
-        <h2>Trusted by Hundreds of Local Customers</h2>
-        <p class="section-sub">We show up on time, do the job right, and stand behind our work.</p>
+        <span class="section-label" data-aos="fade-up">Why Choose Us</span>
+        <h2 data-aos="fade-up">Trusted by Hundreds of Local Customers</h2>
+        <p class="section-sub" data-aos="fade-up">We show up on time, do the job right, and stand behind our work.</p>
         <div class="why-points" id="why-points"></div>
       </div>
       <div>
-        <span class="section-label">Customer Reviews</span>
-        <div class="reviews" id="reviews"></div>
+        <span class="section-label" data-aos="fade-up">Customer Reviews</span>
+        <div class="swiper reviewSwiper" style="width:100%;padding-bottom:40px" data-aos="fade-up">
+          <div class="swiper-wrapper" id="reviewsWrapper"></div>
+          <div class="swiper-pagination"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -330,8 +339,8 @@
   <div class="section-inner">
     <div class="contact-grid">
       <div class="contact-info">
-        <span class="section-label">Get In Touch</span>
-        <h2>Book a Job or Get a Quote</h2>
+        <span class="section-label" data-aos="fade-up">Get In Touch</span>
+        <h2 data-aos="fade-up">Book a Job or Get a Quote</h2>
         <p>Fill in the form and we will get back to you within the hour during business hours. For urgent jobs, call us directly.</p>
         <div class="contact-detail">
           <span class="contact-detail-icon">&#x1F4DE;</span>
@@ -347,7 +356,7 @@
         </div>
       </div>
       <div>
-        <form class="contact-form" id="contact-form">
+        <form class="contact-form" id="contact-form" data-aos="fade-up">
           <div class="form-row">
             <input type="text" class="form-input" placeholder="Your Name" required />
             <input type="tel" class="form-input" placeholder="Phone Number" required />
@@ -373,6 +382,39 @@
 </footer>
 
 <script>
+  const UNSPLASH_KEY = 'k3pP5c2Gf7NEQAi5ZTIAaz3VfJ2Kyj7-0Yu9sfFqFw8';
+
+  const industryQueries = {
+    plumber: 'modern bathroom plumbing renovation',
+    electrician: 'modern home electrical wiring switchboard',
+    trades: 'construction building modern home',
+    auto: 'car workshop automotive mechanic',
+    barber: 'barbershop haircut modern interior',
+    cafe: 'coffee shop cafe latte art interior',
+    salon: 'hair salon modern interior styling',
+    gym: 'modern gym fitness weights training',
+    restaurant: 'restaurant dining modern interior food',
+    property: 'modern home property renovation',
+    painter: 'modern painted home interior renovation'
+  };
+
+  async function loadHeroImage(industry) {
+    try {
+      const query = industryQueries[industry] || 'modern business professional';
+      const res = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=landscape&client_id=${UNSPLASH_KEY}`);
+      const data = await res.json();
+      if (data.urls && data.urls.regular) {
+        const hero = document.querySelector('.hero');
+        if (hero) {
+          hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)), url(${data.urls.regular})`;
+          hero.style.backgroundSize = 'cover';
+          hero.style.backgroundPosition = 'center';
+          hero.style.backgroundAttachment = 'fixed';
+        }
+      }
+    } catch(e) {}
+  }
+
   function hexToRgb(hex) {
     const r = parseInt(hex.slice(0,2),16);
     const g = parseInt(hex.slice(2,4),16);
@@ -686,8 +728,8 @@
   }).join('');
 
   // Services
-  document.getElementById('services-grid').innerHTML = cfg.services.map(function(s) {
-    return '<div class="service-card"><div class="service-icon">' + s.icon + '</div><h3>' + s.name + '</h3><p>' + s.desc + '</p></div>';
+  document.getElementById('services-grid').innerHTML = cfg.services.map(function(s, i) {
+    return '<div class="service-card" data-aos="fade-up" data-aos-delay="' + ((i + 1) * 100) + '"><div class="service-icon">' + s.icon + '</div><h3>' + s.name + '</h3><p>' + s.desc + '</p></div>';
   }).join('');
 
   // Why Us
@@ -697,13 +739,13 @@
     { title: 'Same-Day Availability',      desc: 'We keep slots open for urgent work so you are never left waiting.' },
     { title: '100% Satisfaction',          desc: 'We stand behind every job we do. Not done until you are happy.' },
   ];
-  document.getElementById('why-points').innerHTML = whyPoints.map(function(p) {
-    return '<div class="why-point"><div class="why-check">✓</div><div class="why-point-text"><h4>' + p.title + '</h4><p>' + p.desc + '</p></div></div>';
+  document.getElementById('why-points').innerHTML = whyPoints.map(function(p, i) {
+    return '<div class="why-point" data-aos="fade-left" data-aos-delay="' + (i * 100) + '"><div class="why-check">✓</div><div class="why-point-text"><h4>' + p.title + '</h4><p>' + p.desc + '</p></div></div>';
   }).join('');
 
-  // Reviews
-  document.getElementById('reviews').innerHTML = cfg.reviews.map(function(r) {
-    return '<div class="review-card"><div class="review-stars">' + '★'.repeat(r.stars) + '</div><p class="review-text">&ldquo;' + r.text + '&rdquo;</p><div class="review-author">&mdash; ' + r.author + '</div></div>';
+  // Reviews — Swiper slides
+  document.getElementById('reviewsWrapper').innerHTML = cfg.reviews.map(function(r) {
+    return '<div class="swiper-slide"><div class="review-card"><div class="review-stars">' + '★'.repeat(r.stars) + '</div><p class="review-text">&ldquo;' + r.text + '&rdquo;</p><div class="review-author">&mdash; ' + r.author + '</div></div></div>';
   }).join('');
 
   // Set global system prompt for chat
@@ -789,6 +831,32 @@
     e.preventDefault();
     this.style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
+  });
+
+  // Unsplash hero image
+  loadHeroImage(params.get('t') || 'trades');
+
+  // Parallax hero text
+  window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const heroContent = document.querySelector('.hero > div:first-child');
+    if (heroContent && scrolled < window.innerHeight) {
+      heroContent.style.transform = 'translateY(' + (scrolled * 0.15) + 'px)';
+      heroContent.style.opacity = 1 - (scrolled * 0.002);
+    }
+  });
+</script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  AOS.init({ duration: 700, once: true, offset: 80 });
+  new Swiper('.reviewSwiper', {
+    loop: true,
+    autoplay: { delay: 4000, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    effect: 'fade',
+    fadeEffect: { crossFade: true }
   });
 </script>
 </body>
